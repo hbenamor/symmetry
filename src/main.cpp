@@ -18,9 +18,9 @@ int main( int argc, char* argv[] )
   pcl::visualization::PCLVisualizer viewer("PCL Viewer");
   viewer.setBackgroundColor (0.0, 0.0, 0.5);
 
-  // complete point cloud
+  // complete point cloud and get pose
   pcl::PointCloud<pcl::PointXYZ>::Ptr completedCloud( new pcl::PointCloud<pcl::PointXYZ>() );
-  generateCompletePointCloudFromSymmetry(inputCloud, completedCloud);
+  Eigen::Affine3f pose = generateCompletePointCloudFromSymmetry(inputCloud, completedCloud);
 
   viewer.addPointCloud(inputCloud, "input");
   viewer.addPointCloud(completedCloud, "completed");
