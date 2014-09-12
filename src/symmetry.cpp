@@ -142,7 +142,40 @@ void computePrincipalAxis(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointC
   // calculate origin and direction of principal axis
   axisOrigin  = Eigen::Vector3f(coeff_refined[0], coeff_refined[1], coeff_refined[2]);
   axisDir = Eigen::Vector3f(coeff_refined[3], coeff_refined[4], coeff_refined[5]);
+
+  // normalize to get direction
   axisDir.normalize ();
+
+  // analyze computed axis
+  bool multiAxis = checkMutiAxisSymmetry(cloud);
+
+  if(multiAxis)
+  {
+    pcl::PCA<pcl::PointXYZ> pca;
+    pca.setInputCloud(cloud);
+
+    axisDir = Eigen::Vector3f(0,1,0);
+    axisOrigin = pca.getMean().head(3);
+  }
+}
+
+bool checkMutiAxisSymmetry(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, const double thresh)
+{
+  pcl::PCA<pcl::PointXYZ> pca;
+  pca.setInputCloud(cloud);
+
+  // get the first eigenvalue
+  Eigen::Vector3f evs = pca.getEigenValues();
+
+  // check length
+  std::cout << "[LOG] First Eigenvalue: " << evs[0] << std::endl;
+
+  // return true if points are condensed
+  if(evs[0] < thresh)
+    return true;
+
+  else
+    return false;
 }
 
 void unrevoluteCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)

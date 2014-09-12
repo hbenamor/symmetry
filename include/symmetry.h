@@ -128,4 +128,15 @@ void revoluteCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pc
  */
 Eigen::Affine3f generateCompletePointCloudFromSymmetry(pcl::PointCloud<pcl::PointXYZ>::Ptr partialCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr completeCloud, int numSections = 360, double thresh = 0.01);
 
+/*
+ * \brief Sanity check if object is symmetric with respect to multiple axes
+ *
+ * Checks whether there are multiple axes of symmetry in the object
+ * by analyzing the spread of the generated hypotheses for the axis of symmetry
+ *
+ * \param cloud The point cloud containing points on the axis of symmetry
+ * \param thresh Threshold after which we conclude the object has multiple axes of symmetry
+ */
+bool checkMutiAxisSymmetry(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, const double thresh = 6.0);
+
 #endif

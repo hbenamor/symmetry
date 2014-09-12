@@ -8,19 +8,21 @@ int main( int argc, char* argv[] )
 
   if(argc < 2)
   {
-    std::cout << "Usage: ./symmetryTest object.pcd" << std::endl;
+    std::cout << "Usage: ./symmetryTest object.pcd " << std::endl;
+    std::cout << "    or ./symmetryTest object.pcd threshold" << std::endl;
+    return 0;
   }
   // load the point cloud
   pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud( new pcl::PointCloud<pcl::PointXYZ>() );
   pcl::io::loadPCDFile (argv[1], *inputCloud);
-  
-  // visualize normals
-  pcl::visualization::PCLVisualizer viewer("PCL Viewer");
-  viewer.setBackgroundColor (0.0, 0.0, 0.5);
 
   // complete point cloud and get pose
   pcl::PointCloud<pcl::PointXYZ>::Ptr completedCloud( new pcl::PointCloud<pcl::PointXYZ>() );
-  Eigen::Affine3f pose = generateCompletePointCloudFromSymmetry(inputCloud, completedCloud);
+  Eigen::Affine3f pose = generateCompletePointCloudFromSymmetry(inputCloud, completedCloud, 360, (argc>2)? atof(argv[2]) : 0.03);
+
+  // visualize normals
+  pcl::visualization::PCLVisualizer viewer("PCL Viewer");
+  viewer.setBackgroundColor (0.0, 0.0, 0.5);
 
   viewer.addPointCloud(inputCloud, "input");
   viewer.addPointCloud(completedCloud, "completed");
@@ -32,7 +34,7 @@ int main( int argc, char* argv[] )
 
   while (!viewer.wasStopped ())
   {
-    viewer.spinOnce ();
+    viewer.spin();
   }
 
   return 0;
